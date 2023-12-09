@@ -10,6 +10,8 @@ import Users from "./Screens/Users/index.tsx"
 import Admin from "./Screens/Admin/index.tsx"
 import Insurer from "./Screens/Insurer/index.tsx"
 import Layout from "./Screens/Layout.tsx"
+import { mainnet, polygon, optimism, scrollSepolia } from "wagmi/chains"
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -17,28 +19,30 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/portal",
+    path: "/",
     element: <Layout />,
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "/portal/users",
+        path: "/users",
         element: <Users />,
         errorElement: <ErrorPage />,
       },
       {
-        path: "/portal/admin",
+        path: "/admin",
         element: <Admin />,
         errorElement: <ErrorPage />,
       },
       {
-        path: "/portal/insurer",
+        path: "/insurer",
         element: <Insurer />,
         errorElement: <ErrorPage />,
       },
     ],
   },
 ])
+const chains = [mainnet, polygon, optimism, scrollSepolia]
+
 const config = createConfig(
   getDefaultConfig({
     // Required API Keys
@@ -47,6 +51,7 @@ const config = createConfig(
       .VITE_WALLETCONNECT_PROJECT_ID as string,
 
     // Required
+    chains,
     appName: "ethindia",
   })
 )
