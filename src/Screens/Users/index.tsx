@@ -5,6 +5,8 @@ import { useAccount } from "wagmi"
 import { Web3Storage } from "web3.storage"
 import { useNavigate } from "react-router-dom"
 import { statuses } from "../../constants/claimStatuses.tsx"
+import { motion } from "framer-motion"
+import { FaCopy } from "react-icons/fa"
 
 const Index = () => {
   const { address } = useAccount()
@@ -106,23 +108,52 @@ const Index = () => {
   }
   return (
     <div className='min-h-screen flex flex-col w-full items-center bg-gray-black text-white'>
-      <h1 className='text-2xl font-bold text-cyan-200 mb-4 mt-2'>
+      <h1 className='mb-6 mt-6 text-center text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-4xl lg:text-4xl dark:text-white'>
         Your Claims
       </h1>
       {claims.length > 0 ? (
-        <div className='max-w-md w-full p-5 bg-gray-800 rounded-md shadow-md mt-2'>
+        <div className='max-w-md w-full p-5 rounded-md shadow-md mt-2'>
           <div className='flex flex-col gap-4'>
             {claims.map((claim, index) => (
-              <div
+              <motion.div
                 key={"claim_" + index}
-                className='p-4 border border-gray-700 rounded-md'
+                className='p-4 border border-gray-700 rounded-md m-2'
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+                style={{ boxShadow: "0 0 10px 1px purple" }}
               >
                 <h2 className='font-bold text-lg text-cyan-300'>{`Claim #${
                   index + 1
                 }`}</h2>
                 <ul className='list-disc list-inside space-y-1 mt-2 text-gray-300'>
-                  <li>{`Patient: ${claim.patient}`}</li>
-                  <li>{`Hospital Admin: ${claim.hospitalAdmin}`}</li>
+                  <motion.div
+                    className='lg:tooltip'
+                    data-tip={claim.patient}
+                    onClick={() => navigator.clipboard.writeText(claim.patient)}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <li>
+                      {`Hospital Admin: ${claim.patient.slice(
+                        0,
+                        3
+                      )}...${claim.patient.slice(-3)}`}
+                    </li>
+                  </motion.div>
+                  <motion.div
+                    className='lg:tooltip'
+                    data-tip={claim.hospitalAdmin}
+                    onClick={() =>
+                      navigator.clipboard.writeText(claim.hospitalAdmin)
+                    }
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <li>
+                      {`Hospital Admin: ${claim.hospitalAdmin.slice(
+                        0,
+                        3
+                      )}...${claim.hospitalAdmin.slice(-3)}`}
+                    </li>
+                  </motion.div>
                   <li>{`Claim Amount: ${claim.claimAmount}`}</li>
                   <li>{`Is Bill Verified By Hospital: ${claim.isBillVerifiedByHospital}`}</li>
                   <li>
@@ -136,7 +167,7 @@ const Index = () => {
                   </li>
                   <li>{`Status: ${claim.status}`}</li>
                 </ul>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
