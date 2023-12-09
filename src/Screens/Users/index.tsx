@@ -3,13 +3,21 @@ import { ethers } from "ethers"
 import { InsuranceClaimProcessingAbi } from "../../constants/index.tsx"
 import { useAccount } from "wagmi"
 import { Web3Storage } from "web3.storage"
+import { useNavigate } from "react-router-dom"
+import { statuses } from "../../constants/claimStatuses.tsx"
 
 const Index = () => {
   const { address } = useAccount()
+  const navigate = useNavigate()
   const [image, setImage] = React.useState<any>(null)
   const [preview, setPreview] = React.useState<any>()
   const [claims, setClaims] = React.useState<any>([])
   const inputRef = React.useRef()
+  React.useEffect(() => {
+    if (!address) {
+      navigate("/")
+    }
+  }, [address, navigate])
 
   React.useEffect(() => {
     const fetchUsersClaims = async () => {
@@ -33,12 +41,12 @@ const Index = () => {
               claimAmount: claims.claimAmounts[i],
               isBillVerifiedByHospital: claims.billVerifications[i],
               nftId: claims.nftIds[i],
+              status: statuses[claims.claimStatuses[i]],
             }
             claimsArray.push(claim)
           }
 
           setClaims(claimsArray)
-          console.log(claimsArray)
         }
       } catch (error) {
         console.log(error)
@@ -97,70 +105,100 @@ const Index = () => {
     }
   }
   return (
-    <div className='min-h-screen flex flex-col w-full items-center'>
+    <div className='min-h-screen flex flex-col w-full items-center bg-gray-black text-white'>
+      <h1 className='text-2xl font-bold text-cyan-200 mb-4 mt-2'>
+        Your Claims
+      </h1>
       {claims.length > 0 ? (
-        <div>
-          <h1 className='text-2xl font-bold'>Your Claims</h1>
-          <div className='flex flex-col'>
+        <div className='max-w-md w-full p-5 bg-gray-800 rounded-md shadow-md mt-2'>
+          <div className='flex flex-col gap-4'>
             {claims.map((claim, index) => (
               <div
                 key={"claim_" + index}
-                className='p-2 border-red-100 border-1'
+                className='p-4 border border-gray-700 rounded-md'
               >
-                <h2>{`Claim #${index + 1}`}</h2>
-                <p>{`Patient: ${claim.patient}`}</p>
-                <p>{`Hospital Admin: ${claim.hospitalAdmin}`}</p>
-                <p>{`Claim Amount: ${claim.claimAmount}`}</p>
-                <p>{`Is Bill Verified By Hospital: ${claim.isBillVerifiedByHospital}`}</p>
-                <img
-                  src={`https://ipfs.io/ipfs/${claim.nftId}`}
-                  alt={`NFT Image ${index + 1}`}
-                />
+                <h2 className='font-bold text-lg text-cyan-300'>{`Claim #${
+                  index + 1
+                }`}</h2>
+                <ul className='list-disc list-inside space-y-1 mt-2 text-gray-300'>
+                  <li>{`Patient: ${claim.patient}`}</li>
+                  <li>{`Hospital Admin: ${claim.hospitalAdmin}`}</li>
+                  <li>{`Claim Amount: ${claim.claimAmount}`}</li>
+                  <li>{`Is Bill Verified By Hospital: ${claim.isBillVerifiedByHospital}`}</li>
+                  <li>
+                    <a
+                      href={`https://ipfs.io/ipfs/${claim.nftId}`}
+                      target='_blank'
+                      className='text-blue-200 underline'
+                    >
+                      Open Claim Document
+                    </a>
+                  </li>
+                  <li>{`Status: ${claim.status}`}</li>
+                </ul>
               </div>
             ))}
           </div>
         </div>
       ) : (
-        <div>You Dont have any claim</div>
+        <div
+          className='bg-red-800 border border-red-300 text-red-300 p-4 w-full max-w-md mt-4 rounded-md shadow-md'
+          role='alert'
+        >
+          <p className='font-bold'>No Claims</p>
+          <p>You don't have any claim</p>
+        </div>
       )}
 
       {/* Modal to create a claim */}
-      <dialog id='createClaimModal' className='modal'>
-        <div className='modal-box'>
+      <dialog
+        id='createClaimModal'
+        className='modal fixed w-full h-full top-0 left-0 flex items-center justify-center z-50'
+      >
+        <div className='modal-box bg-gray-800 text-white shadow-xl rounded-lg mx-2 md:max-w-md mx-auto'>
           <form method='dialog'>
-            <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2'>
+            <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white'>
               ✕
             </button>
           </form>
-          <h3 className='font-bold text-lg'>
+          <h3 className='font-bold text-lg px-4 py-2'>
             Upload document to Verify and Create Claim
           </h3>
-          <input
-            type='file'
-            ref={inputRef}
-            className='file-input w-full max-w-xs'
-            onChange={handleChange}
-          />
-          {preview && (
-            <>
-              <img
-                src={preview}
-                alt='preview'
-                className='mt-2 max-w-xs h-auto'
-              />
-              <button
-                onClick={handleRemoveImage}
-                className='mt-2 bg-red-500 text-white p-1 rounded'
-              >
-                Remove Image
-              </button>
-            </>
-          )}
-          {preview && (
-            <button className='btn btn-primary mt-2' onClick={submit}>
-              Create Claim
-            </button>
-          )}
+          <div className='p-4'>
+            <input
+              type='file'
+              ref={inputRef}
+              className='file-input w-full my-2 p-2 border border-gray-600 rounded-md'
+              onChange={handleChange}
+            />
+            {preview && (
+              <>
+                <img
+                  src={preview}
+                  alt='preview'
+                  className='mt-2 w-full h-auto object-cover rounded-md'
+                />
+              </>
+            )}
+          </div>
+          <div className='p-4 flex justify-end'>
+            {preview && (
+              <div className='flex items-center jsus'>
+                <button
+                  onClick={handleRemoveImage}
+                  className='btn btn-primary bg-red-500 py-2 px-4 text-white p-1 rounded mr-2'
+                >
+                  Change Image
+                </button>
+                <button
+                  className='btn btn-primary py-2 px-4  rounded bg-blue-500 text-white '
+                  onClick={submit}
+                >
+                  Create Claim
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </dialog>
     </div>

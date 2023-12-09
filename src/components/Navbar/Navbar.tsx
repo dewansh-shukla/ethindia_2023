@@ -13,10 +13,6 @@ const Navbar = () => {
               </span>
             </Link>
             <div className='flex space-x-4 text-white items-center'>
-              {/* <a href='#'>Dashboard</a>
-              <a href='#'>About</a>
-              <a href='#'>Projects</a>
-              <a href='#'>Contact</a> */}
               {location.pathname === "/users" && (
                 <button
                   className='btn'
