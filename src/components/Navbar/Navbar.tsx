@@ -8,18 +8,20 @@ const Navbar = () => {
         <div className='max-w-5xl mx-auto px-4'>
           <div className='flex items-center justify-between h-16'>
             <Link to='/'>
-              <span className='text-2xl text-white font-semibold'>Logo</span>
+              <span className='text-2xl text-white font-semibold'>
+                Insurify{" "}
+              </span>
             </Link>
             <div className='flex space-x-4 text-white items-center'>
-              <a href='#'>Dashboard</a>
+              {/* <a href='#'>Dashboard</a>
               <a href='#'>About</a>
               <a href='#'>Projects</a>
-              <a href='#'>Contact</a>
+              <a href='#'>Contact</a> */}
               {location.pathname === "/users" && (
                 <button
                   className='btn'
                   onClick={() =>
-                    document.getElementById("my_modal_1").showModal()
+                    document.getElementById("createClaimModal").showModal()
                   }
                 >
                   Create Claim

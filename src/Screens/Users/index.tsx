@@ -8,6 +8,7 @@ const Index = () => {
   const { address } = useAccount()
   const [image, setImage] = React.useState<any>(null)
   const [preview, setPreview] = React.useState<any>()
+  const [claims, setClaims] = React.useState<any>([])
   const inputRef = React.useRef()
 
   React.useEffect(() => {
@@ -23,7 +24,21 @@ const Index = () => {
             signer
           )
           const claims = await contract.getPatientClaims(address)
-          console.log(claims)
+          const claimsArray = []
+          for (let i = 0; i < claims.patients.length; i++) {
+            // Create a claim object for each claim
+            let claim = {
+              patient: claims.patients[i],
+              hospitalAdmin: claims.hospitalAdmins[i],
+              claimAmount: claims.claimAmounts[i],
+              isBillVerifiedByHospital: claims.billVerifications[i],
+              nftId: claims.nftIds[i],
+            }
+            claimsArray.push(claim)
+          }
+
+          setClaims(claimsArray)
+          console.log(claimsArray)
         }
       } catch (error) {
         console.log(error)
@@ -44,11 +59,15 @@ const Index = () => {
     setImage(null)
     setPreview(null)
   }
+  const getWeb3Client = () => {
+    return new Web3Storage({
+      token: import.meta.env.VITE_WEB3_STORAGE_TOKEN,
+    })
+  }
+
   const uploadToIpfs = async () => {
     try {
-      const Web3StorageClient = new Web3Storage({
-        token: import.meta.env.VITE_WEB3_STORAGE_TOKEN,
-      })
+      const Web3StorageClient = getWeb3Client()
       const cid = await Web3StorageClient.put([image])
       return cid
     } catch (error) {
@@ -59,28 +78,54 @@ const Index = () => {
     try {
       const { ethereum } = window
       if (ethereum) {
-        const ipfsCid = await uploadToIpfs()
-        console.log(ipfsCid)
-        // const provider = new ethers.BrowserProvider(ethereum)
-        // const signer = await provider.getSigner()
-        // const contract = new ethers.Contract(
-        //   import.meta.env.VITE_CLAIMS_PROCESSING_CONTRACT_ADDRESS,
-        //   InsuranceClaimProcessingAbi,
-        //   signer
-        // )
-        // const transaction = await contract.createClaim()
+        const Cid = await uploadToIpfs()
+        const provider = new ethers.BrowserProvider(ethereum)
+        const signer = await provider.getSigner()
+        const contract = new ethers.Contract(
+          import.meta.env.VITE_CLAIMS_PROCESSING_CONTRACT_ADDRESS,
+          InsuranceClaimProcessingAbi,
+          signer
+        )
+        const transaction = await contract.submitBill(
+          "0x1cdb53eb11290e26f4234cacf984b0142c63ba21", // Hospital Admin Address Keeping it static for now
+          Cid
+        )
+        document.getElementById("createClaimModal").close()
       }
     } catch (error) {
       console.log(error)
     }
   }
   return (
-    <div className='min-h-screen flex flex-col'>
-      {/* You can open the modal using document.getElementById('ID').showModal() method */}
+    <div className='min-h-screen flex flex-col w-full items-center'>
+      {claims.length > 0 ? (
+        <div>
+          <h1 className='text-2xl font-bold'>Your Claims</h1>
+          <div className='flex flex-col'>
+            {claims.map((claim, index) => (
+              <div
+                key={"claim_" + index}
+                className='p-2 border-red-100 border-1'
+              >
+                <h2>{`Claim #${index + 1}`}</h2>
+                <p>{`Patient: ${claim.patient}`}</p>
+                <p>{`Hospital Admin: ${claim.hospitalAdmin}`}</p>
+                <p>{`Claim Amount: ${claim.claimAmount}`}</p>
+                <p>{`Is Bill Verified By Hospital: ${claim.isBillVerifiedByHospital}`}</p>
+                <img
+                  src={`https://ipfs.io/ipfs/${claim.nftId}`}
+                  alt={`NFT Image ${index + 1}`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div>You Dont have any claim</div>
+      )}
 
-      <div>Previous Claims Listed here</div>
-
-      <dialog id='my_modal_1' className='modal'>
+      {/* Modal to create a claim */}
+      <dialog id='createClaimModal' className='modal'>
         <div className='modal-box'>
           <form method='dialog'>
             <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2'>

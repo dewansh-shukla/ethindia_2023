@@ -10,7 +10,13 @@ import Users from "./Screens/Users/index.tsx"
 import Admin from "./Screens/Admin/index.tsx"
 import Insurer from "./Screens/Insurer/index.tsx"
 import Layout from "./Screens/Layout.tsx"
-import { mainnet, polygon, optimism, scrollSepolia } from "wagmi/chains"
+import {
+  mainnet,
+  polygon,
+  optimism,
+  scrollSepolia,
+  scrollTestnet,
+} from "wagmi/chains"
 
 const router = createBrowserRouter([
   {
@@ -41,7 +47,7 @@ const router = createBrowserRouter([
     ],
   },
 ])
-const chains = [mainnet, polygon, optimism, scrollSepolia]
+const chains = [mainnet, polygon, optimism, scrollSepolia,  scrollTestnet]
 
 const config = createConfig(
   getDefaultConfig({
