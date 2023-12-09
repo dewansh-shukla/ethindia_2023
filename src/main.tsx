@@ -6,8 +6,10 @@ import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import "./index.css"
 import ErrorPage from "./Screens/ErrorPage.tsx"
-import Dashboard from "./Screens/Dashboard/Dashboard.tsx"
-import Feed from "./Screens/Dashboard/Feed/Feed.tsx"
+import Users from "./Screens/Users/index.tsx"
+import Admin from "./Screens/Admin/index.tsx"
+import Insurer from "./Screens/Insurer/index.tsx"
+import Layout from "./Screens/Layout.tsx"
 const router = createBrowserRouter([
   {
     path: "/",
@@ -15,13 +17,24 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/dashboard",
-    element: <Dashboard />,
+    path: "/portal",
+    element: <Layout />,
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "/dashboard/feed",
-        element: <Feed />,
+        path: "/portal/users",
+        element: <Users />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/portal/admin",
+        element: <Admin />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/portal/insurer",
+        element: <Insurer />,
+        errorElement: <ErrorPage />,
       },
     ],
   },
