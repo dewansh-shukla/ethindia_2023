@@ -122,38 +122,40 @@ const Index = () => {
                 transition={{ duration: 0.3 }}
                 style={{ boxShadow: "0 0 10px 1px purple" }}
               >
-                <h2 className='font-bold text-lg text-cyan-300'>{`Claim #${
+                <h2 className='font-bold text-lg text-white'>{`Claim #${
                   index + 1
                 }`}</h2>
                 <ul className='list-disc list-inside space-y-1 mt-2 text-gray-300'>
-                  <motion.div
-                    className='lg:tooltip'
-                    data-tip={claim.patient}
-                    onClick={() => navigator.clipboard.writeText(claim.patient)}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <li>
-                      {`Hospital Admin: ${claim.patient.slice(
+                  <li>
+                    <motion.div
+                      className='lg:tooltip'
+                      data-tip={claim.patient}
+                      onClick={() =>
+                        navigator.clipboard.writeText(claim.patient)
+                      }
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      {`Patient: ${claim.patient.slice(
                         0,
                         3
                       )}...${claim.patient.slice(-3)}`}
-                    </li>
-                  </motion.div>
-                  <motion.div
-                    className='lg:tooltip'
-                    data-tip={claim.hospitalAdmin}
-                    onClick={() =>
-                      navigator.clipboard.writeText(claim.hospitalAdmin)
-                    }
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <li>
+                    </motion.div>
+                  </li>
+                  <li>
+                    <motion.div
+                      className='lg:tooltip'
+                      data-tip={claim.hospitalAdmin}
+                      onClick={() =>
+                        navigator.clipboard.writeText(claim.hospitalAdmin)
+                      }
+                      whileTap={{ scale: 0.9 }}
+                    >
                       {`Hospital Admin: ${claim.hospitalAdmin.slice(
                         0,
                         3
                       )}...${claim.hospitalAdmin.slice(-3)}`}
-                    </li>
-                  </motion.div>
+                    </motion.div>
+                  </li>
                   <li>{`Claim Amount: ${claim.claimAmount}`}</li>
                   <li>{`Is Bill Verified By Hospital: ${claim.isBillVerifiedByHospital}`}</li>
                   <li>

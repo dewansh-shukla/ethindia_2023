@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { ethers } from "ethers"
 import { InsuranceClaimProcessingAbi } from "../../constants/index.tsx"
 import { statuses } from "../../constants/claimStatuses.tsx"
+import { motion } from "framer-motion"
 
 const Admin = () => {
   const { address } = useAccount()
@@ -79,39 +80,81 @@ const Admin = () => {
     <div className='flex flex-col min-h-screen items-center'>
       <span className='mt-2'>Admin Claims</span>
       {claims.length > 0 ? (
-        <div className='flex flex-col'>
-          {claims.map((claim, index) => (
-            <div key={"claim_" + index} className='p-2 border-red-100 border-1'>
-              <h2>{`Claim #${claim.claimId}`}</h2>
-              <p>{`Patient: ${claim.patient}`}</p>
-              <p>{`Hospital Admin: ${claim.hospitalAdmin}`}</p>
-              <p>{`Claim Amount: ${claim.claimAmount}`}</p>
-              <p>{`Is Bill Verified By Hospital: ${claim.isBillVerifiedByHospital}`}</p>
-              <a href={`https://ipfs.io/ipfs/${claim.nftId}`} target='_blank'>
-                Open Claim Document
-              </a>
-              <p>{`Status: ${claim.status}`}</p>
-              <div className='flex justify-end mt-2'>
-                <button
-                  className='btn w-1/4 mr-4'
-                  onClick={() => approveClaim(claim.claimId)}
-                >
-                  Approve
-                </button>
-                <input
-                  type='number'
-                  placeholder='Type here'
-                  className='input input-bordered input-accent w-2/5'
-                  onChange={(e) =>
-                    setClaimAmounts({
-                      ...claimAmounts,
-                      [claim.claimId]: Number(e.target.value),
-                    })
-                  }
-                />
-              </div>
-            </div>
-          ))}
+        <div className='max-w-md w-full p-5 rounded-md shadow-md mt-2'>
+          <div className='flex flex-col gap-4'>
+            {claims.map((claim, index) => (
+              <motion.div
+                key={"claim_" + index}
+                className='p-4 border border-red-100 rounded-md m-2'
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+                style={{ boxShadow: "0 0 10px 1px purple" }}
+              >
+                <h2 className='font-bold text-lg text-cyan-300'>{`Claim #${claim.claimId}`}</h2>
+                <ul className='list-disc list-inside space-y-1 mt-2 text-gray-300'>
+                  <motion.div
+                    className='lg:tooltip'
+                    data-tip={claim.patient}
+                    onClick={() => navigator.clipboard.writeText(claim.patient)}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <li>
+                      {`Hospital Admin: ${claim.patient.slice(
+                        0,
+                        3
+                      )}...${claim.patient.slice(-3)}`}
+                    </li>
+                  </motion.div>
+                  <motion.div
+                    className='lg:tooltip'
+                    data-tip={claim.hospitalAdmin}
+                    onClick={() =>
+                      navigator.clipboard.writeText(claim.hospitalAdmin)
+                    }
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <li>
+                      {`Hospital Admin: ${claim.hospitalAdmin.slice(
+                        0,
+                        3
+                      )}...${claim.hospitalAdmin.slice(-3)}`}
+                    </li>
+                  </motion.div>
+                  <li>{`Claim Amount: ${claim.claimAmount}`}</li>
+                  <li>{`Is Bill Verified By Hospital: ${claim.isBillVerifiedByHospital}`}</li>
+                  <li>
+                    <a
+                      href={`https://ipfs.io/ipfs/${claim.nftId}`}
+                      target='_blank'
+                      className='text-blue-200 underline'
+                    >
+                      Open Claim Document
+                    </a>
+                  </li>
+                  <li>{`Status: ${claim.status}`}</li>
+                </ul>
+                <div className='flex justify-end mt-2'>
+                  <button
+                    className='btn w-1/4 mr-4'
+                    onClick={() => approveClaim(claim.claimId)}
+                  >
+                    Approve
+                  </button>
+                  <input
+                    type='number'
+                    placeholder='Type here'
+                    className='input input-bordered input-secondary w-2/5'
+                    onChange={(e) =>
+                      setClaimAmounts({
+                        ...claimAmounts,
+                        [claim.claimId]: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       ) : (
         <div>You Dont have any claim</div>

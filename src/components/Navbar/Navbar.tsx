@@ -23,6 +23,14 @@ const Navbar = () => {
                   Create Claim
                 </button>
               )}
+              {location.pathname === "/insurer" && (
+                <label htmlFor='my_modal_7' className='btn'>
+                  Add Funds
+                </label>
+              )}
+              {/* The button to open modal */}
+
+              {/* Put this part before </body> tag */}
             </div>
           </div>
         </div>
