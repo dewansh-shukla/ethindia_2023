@@ -23,5 +23,6 @@ Built on the Ethereum blockchain, the DApp leverages the power of smart contract
 - The different variants and all parameters of the policy claims have been considered.
 
 ## Resources
-Check out the [YouTube Demo](https://github.com/dewansh-shukla/ethindia_2023).
+Check out the [YouTube Demo]([https://github.com/dewansh-shukla/ethindia_2023](https://youtu.be/2RhEO_1mgpY)).
+Scroll sepolia testnet Contract address: (0xC07177Ba0bD1A71000EB11B34e00e05fb8B7E19d)
 
